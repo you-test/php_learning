@@ -2,7 +2,7 @@
 error_reporting(-1);
 
 /* データベース設定 */
-define('DB_DNS', 'mysql:host=localhost; dbname=cri_sortable; charset=utf8');
+define('DB_DNS', 'mysql:host=localhost; dbname=cri_sortable; charset=utf8'); 
 define('DB_USER', 'root');
 define('DB_PASSWORD', 'sato1987');
 
@@ -15,6 +15,13 @@ try {
     echo $e->getMessage();
     exit;
 }
+/*----------------------------------------------------
+$dbh = new PDO('DSN', 'user name', 'password', option);
+  option ---- array(変更したい属性=>値, 変更したい属性=>値,) 
+  option(インスタンス化した後) ---- $dbh->setAttribute(変更したい属性, 値); 
+  PDO::ERRMODE_EXCEPTION ---- エラー発生時PDOExceptionの例外を投げてくれる
+  PDO::ATTR_EMULATE_PREPARES, false ---- 静的プレースホルダーを使う
+------------------------------------------------------*/ 
 
 /* データベースへ登録 */
 if(!empty($_POST['inputName'])){
@@ -31,6 +38,11 @@ if(!empty($_POST['inputName'])){
       echo 'データベースにアクセスできません！'.$e->getMessage();
   }
 }
+
+/* -----------------------------------------------------------
+静的プレースホルダー使用でsqlインジェクションを防ぐ
+
+-------------------------------------------------------------*/ 
 
 /* データベースへの登録 */ 
 if(!empty($_POST['left'])){
@@ -108,6 +120,11 @@ if(!empty($_POST['left'])){
 <?php
 $sql = 'SELECT * FROM sortable';
 $stmt = $dbh->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+/*--------------------------------------------- 
+入力値じゃないのでquery()使用
+FETCH_ASSOC ------ [field name] => 値
+
+----------------------------------------------*/ 
 foreach ($stmt as $result){
   echo '  <div class="drag" data-num="'.$result['id'].'" style="left:'.$result['left_x'].'px; top:'.$result['top_y'].'px;">'.PHP_EOL;
   echo '    <p><span class="name">'.$result['id'].' '.$result['name'].'</span></p>'.PHP_EOL;
