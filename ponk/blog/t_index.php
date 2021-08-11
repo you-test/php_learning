@@ -14,7 +14,7 @@
       <?php foreach ($post['comments'] as $comment) { ?>
         <div class="comment">
           <h3><?php echo $comment['name'] ?></h3>
-          <p><?php echo hl2br($comment['content']) ?></p>
+          <p><?php echo nl2br($comment['content']) ?></p>
         </div>
       <?php } ?>  
       <p class="comment_link">
