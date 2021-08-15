@@ -1,7 +1,11 @@
 <?php
   require 'common.php';
+
+  //初期化
   $error = $name = $address = $tel = '';
   if (@$_POST['submit']) {
+
+    //入力チェック
     $name = htmlspecialchars($_POST['name']);
     $address = htmlspecialchars($_POST['address']);
     $tel = htmlspecialchars($_POST['tel']);
@@ -9,12 +13,17 @@
     if (!$address) $error .= 'ご住所を入力してください。<br>';
     if (!$tel) $error .= '電話番号を入力してください。<br>';
     if (preg_match('/[^\d-]/', $tel)) $error .= '電話番号が正しくありません。<br>';
+
     if (!$error) {
       $pdo = connect();
+
+      //店に送信されるメールの本文
       $body = "商品が購入されました。\n\n"
        . "お名前: $name\n"
        . "ご住所: $address\n"
        . "電話番号: $tel\n\n";
+
+       //ループでセッション変数より購入した商人コードと数量を取得してメールの本文に追記
       foreach($_SESSION['cart'] as $code => $num) {
         $st = $pdo->prepare("SELECT * FROM goods WHERE code=?");
         $st->execute(array($code));
